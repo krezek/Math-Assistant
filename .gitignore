@@ -1,0 +1,13 @@
+﻿/.vs
+/.git
+
+*.user
+/x64
+/Math Assistant/x64
+/utils/x64
+/3dutils/x64
+/sqlite/x64
+/shell/x64
+
+/data/books.db
+/Math Assistant/*.aps

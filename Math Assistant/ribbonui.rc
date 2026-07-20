@@ -1,0 +1,113 @@
+// ******************************************************************************
+// * This is an automatically generated file containing the ribbon resource for *
+// * your application.                                                          *
+// ******************************************************************************
+
+#include ".\ids.h"
+
+STRINGTABLE 
+BEGIN
+    IDC_CMD_TAB_START_LabelTitle_RESID L"Start" /* LabelTitle IDC_CMD_TAB_START_LabelTitle_RESID: Start tab */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdGroupObjects_LabelTitle_RESID L"Objects" /* LabelTitle cmdGroupObjects_LabelTitle_RESID: (null) */
+END
+
+cmdButtonFraction_LargeImages_RESID    IMAGE    "res\\divide.png" /* LargeImages cmdButtonFraction_LargeImages_RESID: (null) */
+cmdButtonPower_LargeImages_RESID    IMAGE    "res\\power.png" /* LargeImages cmdButtonPower_LargeImages_RESID: (null) */
+cmdButtonRoot_LargeImages_RESID    IMAGE    "res\\root.png" /* LargeImages cmdButtonRoot_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    cmdGroupConstant_LabelTitle_RESID L"Constants" /* LabelTitle cmdGroupConstant_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonPi_LabelTitle_RESID L"\x03c0" /* LabelTitle cmdButtonPi_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonEuler_LabelTitle_RESID L"e" /* LabelTitle cmdButtonEuler_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdGroupFunctions_LabelTitle_RESID L"Functions" /* LabelTitle cmdGroupFunctions_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonSin_LabelTitle_RESID L"Sin" /* LabelTitle cmdButtonSin_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonCos_LabelTitle_RESID L"Cos" /* LabelTitle cmdButtonCos_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonTan_LabelTitle_RESID L"Tan" /* LabelTitle cmdButtonTan_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonLog_LabelTitle_RESID L"Log" /* LabelTitle cmdButtonLog_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonExp_LabelTitle_RESID L"Exp" /* LabelTitle cmdButtonExp_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonAsin_LabelTitle_RESID L"Asin" /* LabelTitle cmdButtonAsin_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonAcos_LabelTitle_RESID L"Acos" /* LabelTitle cmdButtonAcos_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonAtan_LabelTitle_RESID L"Atan" /* LabelTitle cmdButtonAtan_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonLn_LabelTitle_RESID L"Ln" /* LabelTitle cmdButtonLn_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdGroupSymbols_LabelTitle_RESID L"Symbols" /* LabelTitle cmdGroupSymbols_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonTheta_LabelTitle_RESID L"\x03b8" /* LabelTitle cmdButtonTheta_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonPhi_LabelTitle_RESID L"\x03c6" /* LabelTitle cmdButtonPhi_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    IDC_CMD_ABOUT_LabelTitle_RESID L"About" /* LabelTitle IDC_CMD_ABOUT_LabelTitle_RESID: (null) */
+END
+
+IDC_CMD_ABOUT_LargeImages_RESID    IMAGE    "res\\about.png" /* LargeImages IDC_CMD_ABOUT_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    IDC_CMD_EXIT_LabelTitle_RESID L"Exit" /* LabelTitle IDC_CMD_EXIT_LabelTitle_RESID: (null) */
+END
+
+IDC_CMD_EXIT_LargeImages_RESID    IMAGE    "res\\exit.png" /* LargeImages IDC_CMD_EXIT_LargeImages_RESID: (null) */
+APPLICATION_RIBBON    UIFILE    "ribbon.bml"
