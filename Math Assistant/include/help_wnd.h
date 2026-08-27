@@ -13,10 +13,10 @@ typedef struct _HelpWindow
 	HWND _hWndTree;
 	HWND _hWndText;
 
-	int _client_x, _client_y;
-	int _client_width, _client_height;
+	int _clientX, _clientY;
+	int _clientWidth, _clientHeight;
 
-	HandleHelpMessageFunc _HandleMessageFunc;
+	HandleHelpMessageFunc _fnHandleMessage;
 } HelpWindow;
 
 ATOM HelpWindow_RegisterClass();

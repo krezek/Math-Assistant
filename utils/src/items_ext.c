@@ -1,9 +1,15 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 
 #include <proc.h>
 #include <strg.h>
 #include <items_ext.h>
+
+void RuleQueue_enqueue(RuleQueue* q, const char* s);
 
 // Rational
 
@@ -44,11 +50,11 @@ void ItemRational_toString(int pl, Item* _this, String* s)
 		String_cat(s, ")");
 }
 
-void ItemRational_getRule(int rl, Item* _this, String* s)
+void ItemRational_getRule(int rl, Item* _this, RuleQueue* rq)
 {
 	ItemRational* i = (ItemRational*)_this;
 
-	String_cpy(s, "R");
+	RuleQueue_enqueue(rq, "R");
 }
 
 ItemRational* ItemRational_init(int pl, const char sign, const char* s1, const char* s2)

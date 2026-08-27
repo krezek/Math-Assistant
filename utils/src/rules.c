@@ -1,3 +1,7 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 
@@ -37,6 +41,19 @@ void init_rules_library()
 	Map_insert(gs_rules_map, "(R^R)", rule_replace_power);
 
 	Map_insert(gs_rules_map, "Root(R;R)", rule_root_R);
+
+	//  --------------- Polynomial -----------------------------------------
+	Map_insert(gs_rules_map, "((L^R)*R)", rule_poly_replace_order);
+	Map_insert(gs_rules_map, "((R*(L^R))*R)", rule_poly_replace_co_duplicate);
+
+	//  --------------- calculus -------------------------------------------
+	Map_insert(gs_rules_map, "Integral((R*(L^R));L)", rule_Integral_factor);
+	Map_insert(gs_rules_map, "Integral((L^R);L)", rule_Integral_factor2);
+	Map_insert(gs_rules_map, "Integral(R;L)", rule_Integral_factor3);
+	Map_insert(gs_rules_map, "Integral((expr+expr);L)", rule_Integral_add_expr);
+	Map_insert(gs_rules_map, "Integral((R+expr);L)", rule_Integral_add_expr2);
+	Map_insert(gs_rules_map, "Integral((expr+R);L)", rule_Integral_add_expr3);
+
 }
 
 void destroy_rules_library()
@@ -74,15 +91,19 @@ bool traverse_rules(Item** pItems)
 {
 	bool again = false;
 
-	String* s = String_init();
+	RuleQueue* rq = RuleQueue_init();
 
-	int level = 0;
-	get_level(&level, *pItems);
+	(*pItems)->_getRuleFunc(0, *pItems, rq);
 
-	(*pItems)->_getRuleFunc(level, *pItems, s);
-	again = again || apply_rule(level, pItems, s);
+	RNode* rn = rq->_front;
+	while (rn)
+	{
+		if(rn->_val)
+			again = again || apply_rule(0, pItems, rn->_val->_str);
+		rn = rn->_next;
+	}
 	
-	String_free(s);
+	RuleQueue_free(rq);
 
 	Item** pLeft = &(*pItems)->_left;
 	Item** pRight = &(*pItems)->_right;

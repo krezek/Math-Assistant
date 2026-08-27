@@ -30,11 +30,6 @@ HWND _hFrameWnd;
 
 HRESULT STDMETHODCALLTYPE QueryInterface(IUIApplication* This, REFIID vtblID, void** ppv)
 {
-    if (!ppv)
-    {
-        return E_POINTER;
-    }
-
     if (!IsEqualIID(vtblID, &IID_IUIAPPLICATION)
         && !IsEqualIID(vtblID, &IID_IUnknown)) {
         *ppv = NULL;
@@ -149,6 +144,8 @@ IUIApplicationVtbl myRibbon_Vtbl = {
 
 int CreateRibbon(HWND hWnd)
 {
+    VOID* ppvObj = NULL;
+
     if (!hWnd)
     {
         return -1;
@@ -162,7 +159,6 @@ int CreateRibbon(HWND hWnd)
     }
 
     (IUIApplicationVtbl*)_pApplication->lpVtbl = &myRibbon_Vtbl;
-    VOID* ppvObj = NULL;
 
     HRESULT hr = _pApplication->lpVtbl->QueryInterface(_pApplication, &IID_IUIAPPLICATION, &ppvObj);
     if (FAILED(hr))

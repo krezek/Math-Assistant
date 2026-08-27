@@ -1,4 +1,4 @@
-@call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+@call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat"
 
 @rem Compiling Shaders
 dxc.exe -T vs_6_0 -E VS -Fo output\default_vs.cso shaders\default.hlsl

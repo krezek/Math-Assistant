@@ -1,3 +1,7 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 

@@ -1,17 +1,21 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 
 #include <items.h>
 #include <math_parser.h>
 
-static void* list(int pl, void* v, void* v1)
+static void* list(int pl, void* v, void* v1, const char c)
 {
-	return ItemList_init(v, v1);
+	return ItemList_init(v, v1, c);
 }
 
-static void* equ(int pl, void* v, void* v1, const char c, bool concat)
+static void* equ(int pl, void* v, void* v1, const char* opstr)
 {
-	return v;
+	return ItemEqu_init(v, v1, opstr);
 }
 
 static void* add(int pl, void* v, void* v1)
@@ -59,14 +63,69 @@ static void* parentheses (int pl, void* v)
 	return v;
 }
 
-static void* common (int pl, void* v, void* v1, const char* s)
+static void* common (int pl, void* v, const char* s)
 {
-	return ItemCommFunc_init(pl, v, v1, s);
-}
+	if (_stricmp(s, "Ln") == 0 ||
+		_stricmp(s, "Atan") == 0 ||
+		_stricmp(s, "Acos") == 0 ||
+		_stricmp(s, "Asin") == 0 ||
+		_stricmp(s, "Exp") == 0 ||
+		_stricmp(s, "Log") == 0 ||
+		_stricmp(s, "Tan") == 0 ||
+		_stricmp(s, "Cos") == 0 ||
+		_stricmp(s, "Sin") == 0)
+	{
+		return ItemTriangle_init(pl, v, NULL, s);
+	}
+	else if (_stricmp(s, "Root") == 0)
+	{
+		Item* l = ((Item*)v)->_left;
+		Item* r = ((Item*)v)->_right;
 
-static void* root (int pl, void* v, void* v1)
-{
-	return ItemRoot_init(pl, v, v1);
+		((Item*)v)->_left = ((Item*)v)->_right = NULL;
+		free(v);
+		
+		return ItemRoot_init(pl, l, r);
+	}
+	else if (_stricmp(s, "Integral") == 0)
+	{
+		Item* l = ((Item*)v)->_left;
+		Item* r = ((Item*)v)->_right;
+		
+		((Item*)v)->_left = ((Item*)v)->_right = NULL;
+		free(v);
+		
+		return ItemIntegral_init(pl, l, r);
+	}
+	else if (_stricmp(s, "Derivative") == 0)
+	{
+		Item* l = ((Item*)v)->_left;
+		Item* r = ((Item*)v)->_right;
+
+		((Item*)v)->_left = ((Item*)v)->_right = NULL;
+		free(v);
+		
+		return ItemDerivative_init(pl, l, r);
+	}
+	else if (_stricmp(s, "Lim") == 0)
+	{
+		Item* l = ((Item*)v)->_left;
+		Item* r = ((Item*)v)->_right;
+		
+		((Item*)v)->_left = ((Item*)v)->_right = NULL;
+		free(v);
+		
+		return ItemLimit_init(pl, l, r);
+	}
+	else
+	{
+		Item* i = (Item*)v;
+		if (i)
+		{
+			ItemTree_free(&i);
+		}
+		return NULL;
+	}
 }
 
 static void* number (int pl, const char* s)
@@ -80,7 +139,7 @@ static void* literal (int pl, const char* s)
 }
 
 
-void parse_items(Item** pItems, const char* s)
+int parse_items(Item** pItems, const char* s)
 {
 	MParser* mp = MParser_init();
 
@@ -95,20 +154,19 @@ void parse_items(Item** pItems, const char* s)
 	mp->_powerFunc = power;
 	mp->_subscriptFunc = subscript;
 	mp->_parenthesesFunc = parentheses;
-	mp->_commonFunc = common;
-	mp->_rootFunc = root;
+	mp->_commonFnFunc = common;
 	mp->_numberFunc = number;
 	mp->_literalFunc = literal;
 
-	Item* i = NULL;
-	int rs = MParser_do(mp, (void**)&i, s);
-	if (rs)
+	Item* nodes = NULL;
+
+	int rs = MParser_do(mp, &nodes, s, (TreeFreeFunc)ItemTree_free);
+	if (!rs)
 	{
-		if(i)
-			ItemTree_free(&i);
+		*pItems = nodes;
 	}
-	else
-		*pItems = i;
 
 	MParser_free(mp);
+
+	return rs;
 }

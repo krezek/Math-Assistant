@@ -9,7 +9,7 @@
 typedef struct _PanelList PanelList;
 typedef struct _MainWindow MainWindow;
 
-typedef LRESULT(*HandleMessageFunc) (MainWindow* _this, UINT uMsg, WPARAM wParam, LPARAM lParam);
+typedef LRESULT(*FnHandleMessage) (MainWindow* _this, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 typedef struct _MainWindow
 {
@@ -18,13 +18,13 @@ typedef struct _MainWindow
 	HWND _hWndStatusBar;
 	HWND _hWndAbout;
 	
-	int _client_width, _client_height;
+	int _clientWidth, _clientHeight;
 	
-	CalcWindow* _calc_wnd;
-	GraphicsWindow* _graphics_wnd;
-	HelpWindow* _help_wnd;
+	CalcWindow* _pCalcWnd;
+	GraphicsWindow* _pGraphicsWnd;
+	HelpWindow* _pHelpWnd;
 
-	HandleMessageFunc _HandleMessageFunc;
+	FnHandleMessage _fnHandleMessage;
 } MainWindow;
 
 ATOM MainWindow_RegisterClass();

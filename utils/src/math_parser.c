@@ -1,3 +1,7 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 
@@ -76,8 +80,9 @@ static void* stack_pop(StackNode** root)
 //    factorial : power "!" | power
 //    power : subscript { "^" subscript } .
 //    subscript : primary { "_" primary } .
-//    primary : func "(" expr ")" | "(" expr ")" | number | literal
-//    func : "Root" | CommFunc
+//    recursion : "(" expr ")" .
+//    func :  func_b "(" expr ")" func_e .
+//    primary : recursion | func | number | literal
 
 static int list(MParser* pp, void** pItems, TokensQueue* tokens);
 static int equ(MParser* pp, void** pItems, TokensQueue* tokens);
@@ -87,13 +92,18 @@ static int factor(MParser* pp, void** pItems, TokensQueue* tokens);
 static int factorial(MParser* pp, void** pItems, TokensQueue* tokens);
 static int power(MParser* pp, void** pItems, TokensQueue* tokens);
 static int subscript(MParser* pp, void** pItems, TokensQueue* tokens);
-static int primary(MParser* pp, void** pItems, TokensQueue* tokens);
+static int recursion(MParser* pp, void** pItems, TokensQueue* tokens);
 static int func(MParser* pp, void** pItems, TokensQueue* tokens);
 static int number(MParser* pp, void** pItems, TokensQueue* tokens);
 static int literal(MParser* pp, void** pItems, TokensQueue* tokens);
+static int primary(MParser* pp, void** pItems, TokensQueue* tokens);
 
-int MParser_do(MParser* pp, void** pItems, const char* s)
+static TreeFreeFunc _treeFreeFunc = NULL;
+
+int MParser_do(MParser* pp, void** pItems, const char* s, TreeFreeFunc treeFreeFunc)
 {
+	_treeFreeFunc = treeFreeFunc;
+
 	void* nodes = NULL;
 	int rs = 0;
 	TokensQueue* q = tokensQueue_init();
@@ -109,12 +119,20 @@ int MParser_do(MParser* pp, void** pItems, const char* s)
 	printf("\n");
 #endif
 
+	wsprintf(g_math_parser_err_msg, L"");
+
 	rs = list(pp, &nodes, q);
 
+	if (rs < 0 || !tokensQueue_empty(q))
+	{
 #ifdef _DEBUG
-	if(rs)
-		wprintf(L"%s\n", g_math_parser_err_msg);
+		printf("Parser Error:\n");
 #endif
+		if(nodes)
+			treeFreeFunc(&nodes);
+		nodes = NULL;
+		rs = -1;
+	}
 
 	*pItems = nodes;
 
@@ -126,30 +144,39 @@ int MParser_do(MParser* pp, void** pItems, const char* s)
 //    list : equ {(",") equ} .
 static int list(MParser* pp, void** pItems, TokensQueue* tokens)
 {
-	int rs;
+	int rs = 0;
 	void* node = NULL;
 
 	rs = equ(pp, &node, tokens);
 
 	if (!rs)
 	{
-		if (!tokensQueue_empty(tokens))
+		Token* tok = tokensQueue_front(tokens);
+		while (tok && (accept_tok(tok, OPERATOR, ",") ||
+			accept_tok(tok, OPERATOR, ";")))
 		{
-			Token* tok = tokensQueue_front(tokens);
-			while (accept_tok(tok, OPERATOR, ","))
-			{
-				tok = tokensQueue_dequeue(tokens);
-				token_free(tok);
+			char c;
+			tok = tokensQueue_dequeue(tokens);
+			c = tok->_str[0];
+			token_free(tok);
 
-				void* r_node = NULL;
-				rs = equ(pp, &r_node, tokens);
-				node = pp->_listFunc(PROC_LIST, node, r_node);
-				if (rs)
-					break;
-				
-				if (tokensQueue_empty(tokens)) break;
-				tok = tokensQueue_front(tokens);
+			void* r_node = NULL;
+			rs = equ(pp, &r_node, tokens);
+			node = pp->_listFunc(PROC_LIST, node, r_node, c);
+			if (rs)
+			{
+				swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"list: token expected ...");
+				rs = -1;
+				break;
 			}
+				
+			tok = tokensQueue_front(tokens);
+		}
+
+		if (tok && !accept_tok(tok, PARENTHESE, ")"))
+		{
+			swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"list: wrong end ...");
+			rs = -1;
 		}
 	}
 
@@ -161,45 +188,24 @@ static int list(MParser* pp, void** pItems, TokensQueue* tokens)
 //    equ : expr {("=") expr} .
 static int equ(MParser* pp, void** pItems, TokensQueue* tokens)
 {
-	int rs;
+	int rs = 0;
 	void* node = NULL;
 
 	rs = expr(pp, &node, tokens);
 
 	if (!rs)
 	{
-		if (!tokensQueue_empty(tokens))
+		Token* tok = tokensQueue_front(tokens);
+		Token* ntok = tokensQueue_next(tokens);
+
+		if (tok && (accept_tok(tok, OPERATOR, "=") |
+			accept_tok(tok, OPERATOR, "<") | 
+			accept_tok(tok, OPERATOR, ">") |
+			accept_tok(tok, OPERATOR, "!")))
 		{
-			Token* tok = tokensQueue_front(tokens);
-			Token* ntok = tokensQueue_next(tokens);
-
-			if (accept_tok(tok, OPERATOR, "=") |
-				accept_tok(tok, OPERATOR, "<") | 
-				accept_tok(tok, OPERATOR, ">") |
-				accept_tok(tok, OPERATOR, "!"))
+			if (accept_tok(tok, OPERATOR, "!"))
 			{
-				if (accept_tok(tok, OPERATOR, "!"))
-				{
-					if (ntok &&
-						accept_tok(ntok, OPERATOR, "="))
-					{
-						tok = tokensQueue_dequeue(tokens);
-						ntok = tokensQueue_dequeue(tokens);
-
-						void* r_node = NULL;
-						rs = expr(pp, &r_node, tokens);
-						node = pp->_equFunc(PROC_EQU, node, r_node, tok->_str[0], true);
-
-						token_free(tok);
-						token_free(ntok);
-					}
-					else
-					{
-						swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"token expected ...");
-						return -1;
-					}
-				}
-				else if (ntok &&
+				if (ntok &&
 					accept_tok(ntok, OPERATOR, "="))
 				{
 					tok = tokensQueue_dequeue(tokens);
@@ -207,23 +213,65 @@ static int equ(MParser* pp, void** pItems, TokensQueue* tokens)
 
 					void* r_node = NULL;
 					rs = expr(pp, &r_node, tokens);
-					node = pp->_equFunc(PROC_EQU, node, r_node, tok->_str[0], true);
-					
+					node = pp->_equFunc(PROC_EQU, node, r_node, "!=");
+
 					token_free(tok);
 					token_free(ntok);
 				}
 				else
 				{
-					tok = tokensQueue_dequeue(tokens);
-
-					void* r_node = NULL;
-					rs = expr(pp, &r_node, tokens);
-					node = pp->_equFunc(PROC_EQU, node, r_node, tok->_str[0], false);
-
-					token_free(tok);
+					swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"equ: token expected ...");
+					rs = -1;
 				}
-				
 			}
+			else if (ntok &&
+				accept_tok(ntok, OPERATOR, "="))
+			{
+				tok = tokensQueue_dequeue(tokens);
+				ntok = tokensQueue_dequeue(tokens);
+
+				void* r_node = NULL;
+				rs = expr(pp, &r_node, tokens);
+				const char opstr[3] = {tok->_str[0], ntok->_str[0], 0};
+				node = pp->_equFunc(PROC_EQU, node, r_node, opstr);
+					
+				token_free(tok);
+				token_free(ntok);
+			}
+			else if (ntok &&
+				accept_tok(ntok, OPERATOR, ">"))
+			{
+				tok = tokensQueue_dequeue(tokens);
+				ntok = tokensQueue_dequeue(tokens);
+
+				void* r_node = NULL;
+				rs = expr(pp, &r_node, tokens);
+				const char opstr[3] = { tok->_str[0], ntok->_str[0], 0 };
+				node = pp->_equFunc(PROC_EQU, node, r_node, opstr);
+
+				token_free(tok);
+				token_free(ntok);
+			}
+			else
+			{
+				tok = tokensQueue_dequeue(tokens);
+
+				void* r_node = NULL;
+				rs = expr(pp, &r_node, tokens);
+				const char opstr[2] = { tok->_str[0], 0 };
+				node = pp->_equFunc(PROC_EQU, node, r_node, opstr);
+
+				token_free(tok);
+			}
+		}
+
+		tok = tokensQueue_front(tokens);
+		if (tok && !(accept_tok(tok, PARENTHESE, ")") ||
+			accept_tok(tok, OPERATOR, ",") ||
+			accept_tok(tok, OPERATOR, ";")))
+		{
+			swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"equ: wrong end ...");
+			rs = -1;
 		}
 	}
 
@@ -235,47 +283,47 @@ static int equ(MParser* pp, void** pItems, TokensQueue* tokens)
 //    expr : term {("+"|"-") term} .
 static int expr(MParser* pp, void** pItems, TokensQueue* tokens)
 {
-	int rs;
+	int rs = 0;
 	void* node = NULL;
 
 	rs = term(pp, &node, tokens);
 
 	if (!rs)
 	{
-		if (!tokensQueue_empty(tokens))
+		Token* tok = tokensQueue_front(tokens);
+		while (tok && (accept_tok(tok, OPERATOR, "+") ||
+			accept_tok(tok, OPERATOR, "-")))
 		{
-			Token* tok = tokensQueue_front(tokens);
-			while (accept_tok(tok, OPERATOR, "+") ||
-				accept_tok(tok, OPERATOR, "-"))
+			tok = tokensQueue_dequeue(tokens);
+			if (strcmp("+", tok->_str) == 0)
 			{
-				tok = tokensQueue_dequeue(tokens);
-				if (strcmp("+", tok->_str) == 0)
+				void* l_node = NULL;
+				rs = term(pp, &l_node, tokens);
+				node = pp->_addFunc(PROC_EXPR, node, l_node);
+				if (rs)
 				{
-					void* l_node = NULL;
-					rs = term(pp, &l_node, tokens);
-					node = pp->_addFunc(PROC_EXPR, node, l_node);
-					if (rs)
-					{
-						token_free(tok);
-						break;
-					}
+					swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"expr: token expected ...");
+					token_free(tok);
+					rs = -1;
+					break;
 				}
-				else if (strcmp("-", tok->_str) == 0)
-				{
-					void* l_node = NULL;
-					rs = term(pp, &l_node, tokens);
-					node = pp->_subFunc(PROC_EXPR, node, l_node);
-					if (rs)
-					{
-						token_free(tok);
-						break;
-					}
-				}
-
-				token_free(tok);
-				if (tokensQueue_empty(tokens)) break;
-				tok = tokensQueue_front(tokens);
 			}
+			else if (strcmp("-", tok->_str) == 0)
+			{
+				void* l_node = NULL;
+				rs = term(pp, &l_node, tokens);
+				node = pp->_subFunc(PROC_EXPR, node, l_node);
+				if (rs)
+				{
+					swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"expr: token expected ...");
+					token_free(tok);
+					rs = -1;
+					break;
+				}
+			}
+
+			token_free(tok);
+			tok = tokensQueue_front(tokens);
 		}
 	}
 
@@ -287,47 +335,47 @@ static int expr(MParser* pp, void** pItems, TokensQueue* tokens)
 //    term : factor {("*"|"/"|"%") factor} .
 static int term(MParser* pp, void** pItems, TokensQueue* tokens)
 {
-	int rs;
+	int rs = 0;
 	void* node = NULL;
 
 	rs = factor(pp, &node, tokens);
 
 	if (!rs)
 	{
-		if (!tokensQueue_empty(tokens))
+		Token* tok = tokensQueue_front(tokens);
+		while (tok && (accept_tok(tok, OPERATOR, "*") ||
+			accept_tok(tok, OPERATOR, "/")))
 		{
-			Token* tok = tokensQueue_front(tokens);
-			while (accept_tok(tok, OPERATOR, "*") ||
-				accept_tok(tok, OPERATOR, "/"))
+			tok = tokensQueue_dequeue(tokens);
+			if ((strcmp("*", tok->_str) == 0))
 			{
-				tok = tokensQueue_dequeue(tokens);
-				if ((strcmp("*", tok->_str) == 0))
+				void* l_node = NULL;
+				rs = factor(pp, &l_node, tokens);
+				node = pp->_multFunc(PROC_TERM, node, l_node);
+				if (rs)
 				{
-					void* l_node = NULL;
-					rs = factor(pp, &l_node, tokens);
-					node = pp->_multFunc(PROC_TERM, node, l_node);
-					if (rs)
-					{
-						token_free(tok);
-						break;
-					}
+					swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"term: token expected ...");
+					token_free(tok);
+					rs = -1;
+					break;
 				}
-				else if (strcmp("/", tok->_str) == 0)
-				{
-					void* l_node = NULL;
-					rs = factor(pp, &l_node, tokens);
-					node = pp->_fracFunc(PROC_TERM, node, l_node);
-					if (rs)
-					{
-						token_free(tok);
-						break;
-					}
-				}
-
-				token_free(tok);
-				if (tokensQueue_empty(tokens)) break;
-				tok = tokensQueue_front(tokens);
 			}
+			else if (strcmp("/", tok->_str) == 0)
+			{
+				void* l_node = NULL;
+				rs = factor(pp, &l_node, tokens);
+				node = pp->_fracFunc(PROC_TERM, node, l_node);
+				if (rs)
+				{
+					swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"term: token expected ...");
+					token_free(tok);
+					rs = -1;
+					break;
+				}
+			}
+
+			token_free(tok);
+			tok = tokensQueue_front(tokens);
 		}
 	}
 
@@ -342,16 +390,13 @@ static int factor(MParser* pp, void** pItems, TokensQueue* tokens)
 	void* node = NULL;
 	Token* signToken = NULL;
 	Token* tok = NULL;
-	int rs;
+	int rs = 0;
 
-	if (!tokensQueue_empty(tokens))
+	tok = tokensQueue_front(tokens);
+	if (tok && (accept_tok(tok, OPERATOR, "+") ||
+		accept_tok(tok, OPERATOR, "-")))
 	{
-		tok = tokensQueue_front(tokens);
-		if (accept_tok(tok, OPERATOR, "+") ||
-			accept_tok(tok, OPERATOR, "-"))
-		{
-			signToken = tokensQueue_dequeue(tokens);
-		}
+		signToken = tokensQueue_dequeue(tokens);
 	}
 
 	rs = factorial(pp, &node, tokens);
@@ -371,25 +416,22 @@ static int factor(MParser* pp, void** pItems, TokensQueue* tokens)
 static int factorial(MParser* pp, void** pItems, TokensQueue* tokens)
 {
 	void* node = NULL;
-	int rs;
+	int rs = 0;
 
 	rs = power(pp, &node, tokens);
 
 	if (!rs)
 	{
-		if (!tokensQueue_empty(tokens))
-		{
-			Token* tok = tokensQueue_front(tokens);
-			Token* ntok = tokensQueue_next(tokens);
+		Token* tok = tokensQueue_front(tokens);
+		Token* ntok = tokensQueue_next(tokens);
 
-			if (accept_tok(tok, OPERATOR, "!"))
+		if (tok && accept_tok(tok, OPERATOR, "!"))
+		{
+			if (!ntok || (ntok && !accept_tok(ntok, OPERATOR, "=")))
 			{
-				if (!ntok || (ntok && !accept_tok(ntok, OPERATOR, "=")))
-				{
-					tok = tokensQueue_dequeue(tokens);
-					node = pp->_factorialFunc(PROC_FACTORIAL, node);
-					token_free(tok);
-				}
+				tok = tokensQueue_dequeue(tokens);
+				node = pp->_factorialFunc(PROC_FACTORIAL, node);
+				token_free(tok);
 			}
 		}
 	}
@@ -403,7 +445,7 @@ static int factorial(MParser* pp, void** pItems, TokensQueue* tokens)
 static int power(MParser* pp, void** pItems, TokensQueue* tokens)
 {
 	void* node = NULL;
-	int rs;
+	int rs = 0;
 	StackNode* root = NULL;
 
 	rs = subscript(pp, &node, tokens);
@@ -412,26 +454,24 @@ static int power(MParser* pp, void** pItems, TokensQueue* tokens)
 	{
 		stack_push(&root, node);
 
-		if (!tokensQueue_empty(tokens))
+		Token* tok = tokensQueue_front(tokens);
+		while (tok && accept_tok(tok, OPERATOR, "^"))
 		{
-			Token* tok = tokensQueue_front(tokens);
-			while (accept_tok(tok, OPERATOR, "^"))
+			tok = tokensQueue_dequeue(tokens);
+
+			void* l_node = NULL;
+			rs = subscript(pp, &l_node, tokens);
+			stack_push(&root, l_node);
+			if (rs)
 			{
-				tok = tokensQueue_dequeue(tokens);
-
-				void* l_node = NULL;
-				rs = subscript(pp, &l_node, tokens);
-				stack_push(&root, l_node);
-				if (rs)
-				{
-					token_free(tok);
-					break;
-				}
-
+				swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"power: token expected ...");
 				token_free(tok);
-				if (tokensQueue_empty(tokens)) break;
-				tok = tokensQueue_front(tokens);
+				rs = -1;
+				break;
 			}
+
+			token_free(tok);
+			tok = tokensQueue_front(tokens);
 		}
 
 		node = stack_pop(&root);
@@ -452,7 +492,7 @@ static int power(MParser* pp, void** pItems, TokensQueue* tokens)
 static int subscript(MParser* pp, void** pItems, TokensQueue* tokens)
 {
 	void* node = NULL;
-	int rs;
+	int rs = 0;
 	StackNode* root = NULL;
 
 	rs = primary(pp, &node, tokens);
@@ -461,26 +501,24 @@ static int subscript(MParser* pp, void** pItems, TokensQueue* tokens)
 	{
 		stack_push(&root, node);
 
-		if (!tokensQueue_empty(tokens))
+		Token* tok = tokensQueue_front(tokens);
+		while (tok && accept_tok(tok, OPERATOR, "_"))
 		{
-			Token* tok = tokensQueue_front(tokens);
-			while (accept_tok(tok, OPERATOR, "_"))
+			tok = tokensQueue_dequeue(tokens);
+
+			void* l_node = NULL;
+			rs = primary(pp, &l_node, tokens);
+			stack_push(&root, l_node);
+			if (rs)
 			{
-				tok = tokensQueue_dequeue(tokens);
-
-				void* l_node = NULL;
-				rs = primary(pp, &l_node, tokens);
-				stack_push(&root, l_node);
-				if (rs)
-				{
-					token_free(tok);
-					break;
-				}
-
+				swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"subscript: token expected ...");
 				token_free(tok);
-				if (tokensQueue_empty(tokens)) break;
-				tok = tokensQueue_front(tokens);
+				rs = -1;
+				break;
 			}
+
+			token_free(tok);
+			tok = tokensQueue_front(tokens);
 		}
 
 		node = stack_pop(&root);
@@ -497,77 +535,37 @@ static int subscript(MParser* pp, void** pItems, TokensQueue* tokens)
 	return rs;
 }
 
-//    primary : func "(" expr ")" | "(" expr ")" | number | literal
-static int primary(MParser* pp, void** pItems, TokensQueue* tokens)
+static int recursion(MParser* pp, void** pItems, TokensQueue* tokens)
 {
 	void* node = NULL;
-	int rs = -1;
+	int rs = 0;
 
-	if (!tokensQueue_empty(tokens))
+	Token* tok = tokensQueue_front(tokens);
+	if (tok && accept_tok(tok, PARENTHESE, "(")) // (list)
 	{
-		Token* tok = tokensQueue_front(tokens);
-		Token* ntok = tokensQueue_next(tokens);
+		tok = tokensQueue_dequeue(tokens);
+		token_free(tok);
 
-		if (tok->_typ == LITERAL && ntok && 
-			(accept_tok(ntok, PARENTHESE, "(") || accept_tok(ntok, PARENTHESE, "[") || accept_tok(ntok, PARENTHESE, "{")))
+		rs = list(pp, &node, tokens);
+		
+		if (!rs)
 		{
-			rs = func(pp, &node, tokens);
-			*pItems = node;
-			return rs;
-		}
-		else if (accept_tok(tok, PARENTHESE, "(")) // (expr)
-		{
-			tok = tokensQueue_dequeue(tokens);
-			token_free(tok);
-
-			rs = expr(pp, &node, tokens);
-			*pItems = node;
-
-			if (!rs)
+			tok = tokensQueue_front(tokens);
+			if (!tok || !accept_tok(tok, PARENTHESE, ")"))
 			{
-				if (tokensQueue_empty(tokens)) // expect ")"
-				{
-					swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"parenthese expected ...");
-					return -1;
-				}
-
-				tok = tokensQueue_front(tokens);
-				if (!accept_tok(tok, PARENTHESE, ")"))
-				{
-					swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"parenthese expected ...");
-					return -1;
-				}
-
-				*pItems = pp->_parenthesesFunc(PROC_PRIMARY_1, *pItems);
+				swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"recursion: parenthese expected ...");
+				rs = -1;
+			}
+			else
+			{
+				node = pp->_parenthesesFunc(PROC_RECURSION, node);
 
 				tok = tokensQueue_dequeue(tokens);
 				token_free(tok);
-			}
 
-			return rs;
+				rs = 1;
+			}
 		}
-		else if (tok->_typ == NUMBER) // Number
-		{
-			rs = number(pp, &node, tokens);
-			*pItems = node;
-			return rs;
-		}
-		else if (tok->_typ == LITERAL) // Literal
-		{
-			rs = literal(pp, &node, tokens);
-			*pItems = node;
-			return rs;
-		}
-		else
-		{
-			swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"token expected ...");
-			rs = -1;
-		}
-	}
-	else
-	{
-		swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"token expected ...");
-		rs = -1;
 	}
 
 	*pItems = node;
@@ -575,92 +573,44 @@ static int primary(MParser* pp, void** pItems, TokensQueue* tokens)
 	return rs;
 }
 
-//    func : "Root" | CommFunc
 static int func(MParser* pp, void** pItems, TokensQueue* tokens)
 {
 	void* node = NULL;
-	int rs = -1;
+	int rs = 0;
 
-	Token* tok_func_name = tokensQueue_dequeue(tokens); // Function name
+	Token* tok = tokensQueue_front(tokens);
+	Token* ntok = tokensQueue_next(tokens);
 
-	Token* tok_par = tokensQueue_dequeue(tokens); // Parenthes
-	token_free(tok_par);
-
-	if (accept_tok(tok_func_name, LITERAL, "Root"))
+	if (tok && tok->_typ == LITERAL && ntok &&
+		(accept_tok(ntok, PARENTHESE, "(")))
 	{
-		rs = expr(pp, &node, tokens);
-		
+		tok = tokensQueue_dequeue(tokens);
+		ntok = tokensQueue_dequeue(tokens);
+
+		rs = list(pp, &node, tokens);
 		if (!rs)
 		{
-			void* bNode = NULL;
-
-			if (!tokensQueue_empty(tokens))
+			Token* ptok = tokensQueue_front(tokens);
+			if (!ptok || !accept_tok(ptok, PARENTHESE, ")"))
 			{
-				Token* bTok = tokensQueue_front(tokens);
-				if (accept_tok(bTok, OPERATOR, ";"))
-				{
-					bTok = tokensQueue_dequeue(tokens);
-					token_free(bTok);
+				swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"func: parenthese expected ...");
+				rs = -1;
+			}
+			else
+			{
+				ptok = tokensQueue_dequeue(tokens);
+				token_free(ptok);
 
-					rs = list(pp, &bNode, tokens);
-				}
-
-				node = pp->_rootFunc(PROC_PRIMARY_2, node, bNode);
+				node = pp->_commonFnFunc(PROC_FUNC, node, tok->_str);
+				rs = 1;
 			}
 		}
 
-		*pItems = node;
-	}
-	else
-	{
-		void* rNode = NULL;
-
-		rs = expr(pp, &node, tokens);
-		if (!rs)
-		{
-			if (!tokensQueue_empty(tokens))
-			{
-				Token* rTok = tokensQueue_front(tokens);
-				if (accept_tok(rTok, OPERATOR, ";"))
-				{
-					rTok = tokensQueue_dequeue(tokens);
-					token_free(rTok);
-
-					rs = expr(pp, &rNode, tokens);
-					if (!rs)
-					{
-						swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"expr expected ...");
-						return -1;
-					}
-				}
-			}
-		}
-
-		node = pp->_commonFunc(PROC_PRIMARY_3, node, rNode, tok_func_name->_str);
-		*pItems = node;
+		token_free(ntok);
+		token_free(tok);
 	}
 
-	if (tokensQueue_empty(tokens)) // expect "Parenthes"
-	{
-		swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"parenthese expected ...");
-		token_free(tok_func_name);
-		return -1;
-	}
-
-	tok_par = tokensQueue_front(tokens);
-	if (!accept_tok(tok_par, PARENTHESE, ")") &&
-		!accept_tok(tok_par, PARENTHESE, "]") &&
-		!accept_tok(tok_par, PARENTHESE, "}"))
-	{
-		swprintf(g_math_parser_err_msg, MAX_ERROR_MSG, L"parenthese expected ...");
-		token_free(tok_func_name);
-		return -1;
-	}
-
-	tok_par = tokensQueue_dequeue(tokens); // Parenthes
-	token_free(tok_par);
-
-	token_free(tok_func_name);
+	*pItems = node;
 
 	return rs;
 }
@@ -669,26 +619,102 @@ static int func(MParser* pp, void** pItems, TokensQueue* tokens)
 static int number(MParser* pp, void** pItems, TokensQueue* tokens)
 {
 	void* node = NULL;
-	int rs = -1;
+	int rs = 0;
 
-	Token* tok = tokensQueue_dequeue(tokens);
-	node = pp->_numberFunc(PROC_PRIMARY_4, tok->_str);
-	token_free(tok);
+	Token* tok = tokensQueue_front(tokens);
+	if (tok && (tok->_typ == NUMBER)) // Number
+	{
+		tok = tokensQueue_dequeue(tokens);
+		node = pp->_numberFunc(PROC_NUMBER, tok->_str);
+		token_free(tok);
 
-	*pItems = node;
-	return (rs = 0);
+		*pItems = node;
+		rs = 1;
+	}
+
+	return rs;
 }
 
 //    literal .
 static int literal(MParser* pp, void** pItems, TokensQueue* tokens)
 {
 	void* node = NULL;
-	int rs = -1;
+	int rs = 0;
 
-	Token* tok = tokensQueue_dequeue(tokens);
-	node = pp->_literalFunc(PROC_PRIMARY_5, tok->_str);
-	token_free(tok);
+	Token* tok = tokensQueue_front(tokens);
+	if (tok && (tok->_typ == LITERAL)) // Literal
+	{
+		tok = tokensQueue_dequeue(tokens);
+		node = pp->_literalFunc(PROC_LITERAL, tok->_str);
+		token_free(tok);
+
+		*pItems = node;
+		rs = 1;
+	}
+
+	return rs;
+}
+
+
+//    primary : recursion | func | number | literal
+static int primary(MParser* pp, void** pItems, TokensQueue* tokens)
+{
+	void* node = NULL;
+	int rs = 0;
+
+	rs = recursion(pp, &node, tokens);
+	if (rs > 0)
+	{
+		*pItems = node;
+		return rs >= 0 ? 0 : rs;
+	}
+	else
+	{
+		if (node)
+			_treeFreeFunc(&node);
+		node = NULL;
+	}
+
+	rs = func(pp, &node, tokens);
+	if (rs > 0)
+	{
+		*pItems = node;
+		return rs >= 0 ? 0 : rs;
+	}
+	else
+	{
+		if (node)
+			_treeFreeFunc(&node);
+		node = NULL;
+	}
+
+	rs = literal(pp, &node, tokens);
+	if (rs > 0)
+	{
+		*pItems = node;
+		return rs >= 0 ? 0 : rs;
+	}
+	else
+	{
+		if (node)
+			_treeFreeFunc(&node);
+		node = NULL;
+	}
+
+
+	rs = number(pp, &node, tokens);
+	if (rs > 0)
+	{
+		*pItems = node;
+		return rs >= 0 ? 0 : rs;
+	}
+	else
+	{
+		if (node)
+			_treeFreeFunc(&node);
+		node = NULL;
+	}
 
 	*pItems = node;
-	return (rs = 0);
+	return -1;
 }

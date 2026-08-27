@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -50,7 +50,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>.;include;..\utils\include;..\sqlite;..\3dutils\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;..\utils\include;..\calc\include;..\graphics\include;..\sqlite</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -73,7 +73,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>.;include;..\utils\include;..\sqlite;..\3dutils\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;..\utils\include;..\calc\include;..\graphics\include;..\sqlite</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -95,12 +95,9 @@
     <Image Include="Math Assistant.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\calc_wnd.h" />
-    <ClInclude Include="include\editor.h" />
-    <ClInclude Include="include\gitems.h" />
+    <ClInclude Include="ids.h" />
     <ClInclude Include="include\help_wnd.h" />
     <ClInclude Include="include\main_wnd.h" />
-    <ClInclude Include="include\panel.h" />
     <ClInclude Include="include\ribbon.h" />
     <ClInclude Include="include\winutil.h" />
     <ClInclude Include="resource.h" />
@@ -108,16 +105,11 @@
     <ClInclude Include="src\platform.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\calc_wnd.c" />
     <ClCompile Include="src\cmdhandler.c" />
-    <ClCompile Include="src\editor.c" />
-    <ClCompile Include="src\gitems.c" />
-    <ClCompile Include="src\gparse_helper.c" />
     <ClCompile Include="src\help_wnd.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\main_wnd.c" />
     <ClCompile Include="src\main_wnd_ex.c" />
-    <ClCompile Include="src\panel.c" />
     <ClCompile Include="src\pch.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -126,11 +118,11 @@
     <ClCompile Include="src\winutil.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3dutils\3dutils.vcxproj">
-      <Project>{c750a7d4-6efa-4d85-88f8-ed42dd0a0544}</Project>
+    <ProjectReference Include="..\calc\calc.vcxproj">
+      <Project>{13f57834-840c-4593-ac88-098ed0003430}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\shell\shell.vcxproj">
-      <Project>{8067d61f-0107-4f66-ad52-496ef6c91ee1}</Project>
+    <ProjectReference Include="..\graphics\graphics.vcxproj">
+      <Project>{c750a7d4-6efa-4d85-88f8-ed42dd0a0544}</Project>
     </ProjectReference>
     <ProjectReference Include="..\sqlite\sqlite.vcxproj">
       <Project>{44c1f588-3699-47da-89fc-eeb4815fd6dc}</Project>

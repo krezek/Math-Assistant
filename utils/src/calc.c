@@ -1,3 +1,7 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 
@@ -187,11 +191,11 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 		mpfr_clear(a2);
 		mpfr_clear(a3);
 	}
-	else if (item->_type == ITEM_CommFunc)
+	else if (item->_type == ITEM_Triangle)
 	{
-		ItemCommFunc* i = (ItemCommFunc*)item;
+		ItemTriangle* i = (ItemTriangle*)item;
 		
-		if (_stricmp("sin", i->_str) == 0)
+		if (_stricmp("sin", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -201,7 +205,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("cos", i->_str) == 0)
+		else if (_stricmp("cos", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -211,7 +215,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("tan", i->_str) == 0)
+		else if (_stricmp("tan", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -221,7 +225,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("log", i->_str) == 0)
+		else if (_stricmp("log", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -231,7 +235,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("exp", i->_str) == 0)
+		else if (_stricmp("exp", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -241,7 +245,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("asin", i->_str) == 0)
+		else if (_stricmp("asin", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -251,7 +255,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("acos", i->_str) == 0)
+		else if (_stricmp("acos", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -261,7 +265,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("atan", i->_str) == 0)
+		else if (_stricmp("atan", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -271,7 +275,7 @@ void calcWolker(mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("ln", i->_str) == 0)
+		else if (_stricmp("ln", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2 (a, MPFR_PRECISION);
@@ -402,67 +406,67 @@ void calcWolker_v3(float x, float y, float z, float* t, Item* item, int* pCode)
 
 		*t = powf(a1, 1 / a2);
 	}
-	else if (item->_type == ITEM_CommFunc)
+	else if (item->_type == ITEM_Triangle)
 	{
-		ItemCommFunc* i = (ItemCommFunc*)item;
+		ItemTriangle* i = (ItemTriangle*)item;
 
-		if (_stricmp("sin", i->_str) == 0)
+		if (_stricmp("sin", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = sinf(a);
 		}
-		else if (_stricmp("cos", i->_str) == 0)
+		else if (_stricmp("cos", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = cosf(a);
 		}
-		else if (_stricmp("tan", i->_str) == 0)
+		else if (_stricmp("tan", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = tanf(a);
 		}
-		else if (_stricmp("log", i->_str) == 0)
+		else if (_stricmp("log", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = log10f(a);
 		}
-		else if (_stricmp("exp", i->_str) == 0)
+		else if (_stricmp("exp", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = expf(a);
 		}
-		else if (_stricmp("asin", i->_str) == 0)
+		else if (_stricmp("asin", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = asinf(a);
 		}
-		else if (_stricmp("acos", i->_str) == 0)
+		else if (_stricmp("acos", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = acosf(a);
 		}
-		else if (_stricmp("atan", i->_str) == 0)
+		else if (_stricmp("atan", i->_str->_str) == 0)
 		{
 			float a;
 
 			calcWolker_v3(x, y, z, &a, item->_left, pCode);
 			*t = atanf(a);
 		}
-		else if (_stricmp("ln", i->_str) == 0)
+		else if (_stricmp("ln", i->_str->_str) == 0)
 		{
 			float a;
 
@@ -636,11 +640,11 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 		mpfr_clear(a2);
 		mpfr_clear(a3);
 	}
-	else if (item->_type == ITEM_CommFunc)
+	else if (item->_type == ITEM_Triangle)
 	{
-		ItemCommFunc* i = (ItemCommFunc*)item;
+		ItemTriangle* i = (ItemTriangle*)item;
 
-		if (_stricmp("sin", i->_str) == 0)
+		if (_stricmp("sin", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -650,7 +654,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("cos", i->_str) == 0)
+		else if (_stricmp("cos", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -660,7 +664,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("tan", i->_str) == 0)
+		else if (_stricmp("tan", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -670,7 +674,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("log", i->_str) == 0)
+		else if (_stricmp("log", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -680,7 +684,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("exp", i->_str) == 0)
+		else if (_stricmp("exp", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -690,7 +694,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("asin", i->_str) == 0)
+		else if (_stricmp("asin", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -700,7 +704,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("acos", i->_str) == 0)
+		else if (_stricmp("acos", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -710,7 +714,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("atan", i->_str) == 0)
+		else if (_stricmp("atan", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);
@@ -720,7 +724,7 @@ void calcWolker_v4(float x, float y, float z, mpfr_t* t, Item* item, int* pCode)
 
 			mpfr_clear(a);
 		}
-		else if (_stricmp("ln", i->_str) == 0)
+		else if (_stricmp("ln", i->_str->_str) == 0)
 		{
 			mpfr_t a;
 			mpfr_init2(a, MPFR_PRECISION);

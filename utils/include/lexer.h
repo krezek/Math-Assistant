@@ -23,12 +23,10 @@ typedef struct
 	TNode* _front, * _rear;
 } TokensQueue;
 
-Token* token_init(int i, TokenTyp t, const char* s, size_t len);
 void token_free(Token* tok);
 void token_print(const Token* tok);
 
 TokensQueue* tokensQueue_init();
-void tokensQueue_enqueue(TokensQueue* q, Token* v);
 Token* tokensQueue_dequeue(TokensQueue* q);
 Token* tokensQueue_front(TokensQueue* q);
 Token* tokensQueue_next(TokensQueue* q);

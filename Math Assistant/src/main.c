@@ -50,13 +50,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
         return -1;
     }
 
-    GraphicsWindow_Initial3D(mainWindow->_graphics_wnd);
+    GraphicsWindow_Initial3D(mainWindow->_pGraphicsWnd);
 
     ShowWindow(mainWindow->_hWnd, nCmdShow);
     UpdateWindow(mainWindow->_hWnd);
 
-    GameTimer_Init(&mainWindow->_graphics_wnd->_game_timer);
-    GameTimer_Reset(&mainWindow->_graphics_wnd->_game_timer);
+    GameTimer_Init(&mainWindow->_pGraphicsWnd->_gameTimer);
+    GameTimer_Reset(&mainWindow->_pGraphicsWnd->_gameTimer);
 
     // Main message loop:
     MSG msg = { 0 };
@@ -69,12 +69,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
         }
         else
         {
-            GameTimer_Tick(&mainWindow->_graphics_wnd->_game_timer);
+            GameTimer_Tick(&mainWindow->_pGraphicsWnd->_gameTimer);
 
-            if (!mainWindow->_graphics_wnd->_paused)
+            if (!mainWindow->_pGraphicsWnd->_paused)
             {
-                GraphicsWindow_Update(mainWindow->_graphics_wnd);
-                GraphicsWindow_Draw(mainWindow->_graphics_wnd);
+                GraphicsWindow_Update(mainWindow->_pGraphicsWnd);
+                GraphicsWindow_Draw(mainWindow->_pGraphicsWnd);
             }
             else
             {

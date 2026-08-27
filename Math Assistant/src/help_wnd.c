@@ -75,7 +75,7 @@ static LRESULT CALLBACK DefaultWindow_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, 
 
     if (pThis)
     {
-        return pThis->_HandleMessageFunc(pThis, uMsg, wParam, lParam);
+        return pThis->_fnHandleMessage(pThis, uMsg, wParam, lParam);
     }
     else
     {
@@ -88,7 +88,7 @@ HelpWindow* HelpWindow_init()
     HelpWindow* hw = (HelpWindow*)malloc(sizeof(HelpWindow));
     assert(hw != NULL);
 
-    hw->_HandleMessageFunc = HandleMessage;
+    hw->_fnHandleMessage = HandleMessage;
 
     hw->_hWnd = NULL;
 
@@ -260,26 +260,26 @@ static LRESULT OnSize(HelpWindow* hw)
     const double view_vfactor = 0.33;
 
     MoveWindow(hw->_hWnd,
-        hw->_client_x,
-        hw->_client_y,
-        hw->_client_width,
-        hw->_client_height,
+        hw->_clientX,
+        hw->_clientY,
+        hw->_clientWidth,
+        hw->_clientHeight,
         TRUE);
 
     MoveWindow(hw->_hWndBookLabel, 0, 0,
         75, book_row_height, TRUE);
 
     MoveWindow(hw->_hWndBookCombobox, 75, 0,
-        hw->_client_width - 75, book_row_height, TRUE);
+        hw->_clientWidth - 75, book_row_height, TRUE);
 
     MoveWindow(hw->_hWndTree, 0, book_row_height,
-        hw->_client_width,
-        (int)((hw->_client_height - book_row_height) * view_vfactor), TRUE);
+        hw->_clientWidth,
+        (int)((hw->_clientHeight - book_row_height) * view_vfactor), TRUE);
 
     MoveWindow(hw->_hWndText, 0, book_row_height +
-        (int)((hw->_client_height - book_row_height) * view_vfactor),
-        hw->_client_width,
-        (int)((hw->_client_height - book_row_height) * (1.0 - view_vfactor)), TRUE);
+        (int)((hw->_clientHeight - book_row_height) * view_vfactor),
+        hw->_clientWidth,
+        (int)((hw->_clientHeight - book_row_height) * (1.0 - view_vfactor)), TRUE);
     return 0;
 }
 

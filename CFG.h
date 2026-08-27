@@ -4,7 +4,7 @@
 //#define _PKG
 
 #define APP_NAME "Mathematic Assistant"
-#define APP_VERSION "Mathematic Assistant\nVersion 1.0\n\n\nBy REZEK\nhttps://krezek.github.io"
+#define APP_VERSION "Mathematic Assistant\nVersion 15.1\n\n\nBy REZEK\nhttps://krezek.github.io"
 
 #ifdef _PKG
 #define DB_URL "\\ProgramData\\rezek\\SAC\\books.db"

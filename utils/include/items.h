@@ -5,14 +5,32 @@
 
 typedef enum {ITEM_Base = 0, ITEM_Literal, ITEM_Number, ITEM_Rational, 
 				ITEM_List, ITEM_Equ, ITEM_Add, ITEM_Sub, ITEM_Mult, ITEM_Frac,
-				ITEM_Sign, ITEM_Pow, ITEM_Subscript, ITEM_Factorial, ITEM_Parentheses, ITEM_CommFunc, ITEM_Root
+				ITEM_Sign, ITEM_Pow, ITEM_Subscript, ITEM_Factorial, ITEM_Parentheses, 
+				ITEM_Triangle, ITEM_Root, ITEM_Integral, ITEM_Derivative, ITEM_Limit
 } ItemType;
 
 typedef struct _Item Item;
+typedef struct _RuleQueue RuleQueue;
 
 typedef void (*destroyFunc) (Item* _this);
 typedef void (*toStringItemFunc) (int pl, Item* _this, String* s);
-typedef void (*getRuleFunc) (int pl, Item* _this, String* s);
+typedef void (*getRuleFunc) (int pl, Item* _this, RuleQueue* rq);
+
+typedef struct
+{
+	String* _str;
+} Rule;
+
+typedef struct _RNode
+{
+	Rule* _val;
+	struct _RNode* _next;
+} RNode;
+
+typedef struct _RuleQueue
+{
+	RNode* _front, * _rear;
+} RuleQueue;
 
 typedef struct _Item
 {
@@ -45,12 +63,14 @@ typedef struct
 typedef struct
 {
 	Item _item;
+
+	char _colon;
 } ItemList;
 
 typedef struct
 {
 	Item _item;
-	char _sy;
+	String* _operator;
 } ItemEqu;
 
 typedef struct
@@ -101,9 +121,8 @@ typedef struct
 {
 	Item _item;
 
-	char* _str;
-	size_t _len;
-} ItemCommFunc;
+	String* _str;
+} ItemTriangle;
 
 typedef struct
 {
@@ -113,7 +132,26 @@ typedef struct
 	int _sPadding;
 } ItemRoot;
 
-ItemList* ItemList_init(Item* l, Item* r);
+typedef struct
+{
+	Item _item;
+
+} ItemIntegral;
+
+typedef struct
+{
+	Item _item;
+
+} ItemDerivative;
+
+typedef struct
+{
+	Item _item;
+
+} ItemLimit;
+
+ItemList* ItemList_init(Item* l, Item* r, const char c);
+ItemEqu* ItemEqu_init(Item* l, Item* r, const char* op);
 
 ItemLiteral* ItemLiteral_init(int pl, const char* s);
 ItemNumber* ItemNumber_init(int pl, const char* s);
@@ -125,17 +163,22 @@ ItemMult* ItemMult_init(int pl, Item* l, Item* r);
 ItemFrac* ItemFrac_init(int pl, Item* l, Item* r);
 
 ItemSign* ItemSign_init(int pl, Item* l, const char sgn);
+ItemFactorial* ItemFactorial_init(int pl, Item* l);
 
-ItemRoot* ItemRoot_init(int pl, Item* l, Item* r);
 ItemPow* ItemPow_init(int pl, Item* l, Item* r);
 ItemSubscript* ItemSubscript_init(int pl, Item* l, Item* r);
-ItemCommFunc* ItemCommFunc_init(int pl, Item* l, Item* r, const char* s);
 
-ItemFactorial* ItemFactorial_init(int pl, Item* l);
+ItemTriangle* ItemTriangle_init(int pl, Item* l, Item* r, const char* s);
+ItemRoot* ItemRoot_init(int pl, Item* l, Item* r);
+ItemIntegral* ItemIntegral_init(int pl, Item* l, Item* r);
+ItemDerivative* ItemDerivative_init(int pl, Item* l, Item* r);
+ItemLimit* ItemLimit_init(int pl, Item* l, Item* r);
 
 bool Item_isLeaf(Item* i);
 void ItemTree_free(Item** Item);
-void get_level(int* pl, Item* pItems);
+
+RuleQueue* RuleQueue_init();
+void RuleQueue_free(RuleQueue* q);
 
 #endif /* _ITEMS_H_ */
 

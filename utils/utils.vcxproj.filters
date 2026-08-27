@@ -92,5 +92,11 @@
     <ClCompile Include="src\rules_replace.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\rules_calculus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rules_polynomial.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

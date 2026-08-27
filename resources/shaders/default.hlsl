@@ -1,3 +1,5 @@
+#include "lighting.hlsl"
+
 SamplerState gsamPointWrap : register(s0);
 SamplerState gsamPointClamp : register(s1);
 SamplerState gsamLinearWrap : register(s2);
@@ -24,13 +26,12 @@ cbuffer cbPass : register(b1)
     
     float3 gEyePosW;
     float cbPerObjectPad1;
-    
-    float4 gAmbientLight;
 };
 
 struct VertexIn
 {
     float3 PosL : POSITION;
+    float3 NormalL : NORMAL;
     float3 ColorL : COLOR;
 };
 
@@ -38,6 +39,7 @@ struct VertexOut
 {
     float4 PosH : SV_POSITION;
     float3 PosW : POSITION;
+    float3 NormalW : NORMAL;
     float3 ColorW : COLOR;
 };
 
@@ -48,6 +50,10 @@ VertexOut VS(VertexIn vin)
     // Transform to world space.
     float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
     vout.PosW = posW.xyz;
+    
+    vout.NormalW = mul(vin.NormalL, (float3x3) gWorld);
+    vin.NormalL = normalize(vin.NormalL);
+    vout.NormalW = vin.NormalL;
 
     // Transform to homogeneous clip space.
     vout.PosH = mul(posW, gViewProj);
@@ -59,5 +65,26 @@ VertexOut VS(VertexIn vin)
 
 float4 PS(VertexOut pin) : SV_Target
 {
-    return float4(pin.ColorW, 0.0f);
+    float4 ambient =
+    {
+        0.5f, 0.5f, 0.5f, 1.0f
+    };
+    Material mat =
+    {
+        { 1.0f, 1.0f, 1.0f, 1.0f },
+        { 0.02f, 0.02f, 0.02f },
+        0.8f
+    };
+    Light lgt =
+    {
+        { 0.19f, 0.19f, 0.19f },
+        { 0.0f, -0.5f, 0.5f }
+    };
+    
+    float3 toEyeW = normalize(gEyePosW - pin.PosW);
+    lgt.Direction = -toEyeW;
+    
+    float4 directLight = ComputeLighting(lgt, mat, pin.NormalW, toEyeW);
+    
+    return float4(pin.ColorW, 1.0f) * ambient + directLight;
 }

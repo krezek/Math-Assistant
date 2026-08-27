@@ -1,3 +1,7 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 
@@ -91,7 +95,10 @@ Token* tokensQueue_dequeue(TokensQueue* q)
 
 Token* tokensQueue_front(TokensQueue* q)
 {
-	return q->_front->_val;
+	if(q->_front)
+		return q->_front->_val;
+
+	return NULL;
 }
 
 Token* tokensQueue_next(TokensQueue* q)

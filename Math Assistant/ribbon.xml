@@ -13,46 +13,77 @@
       </Command.LabelTitle>
     </Command>
 
-	<Command Name="cmdGroupObjects">
+	<Command Name="cmdGroupObject">
 		<Command.LabelTitle>
-			<String Id ="21000">Objects</String>
+			<String Id ="21000">Object</String>
 		</Command.LabelTitle>
 	</Command>
-	<Command Name="cmdButtonFraction">
+	<Command Name="cmdButtonDivision">
 		<Command.LargeImages>
-			<Image Id ="21100">res/divide.png</Image>
+			<Image Id ="21100">res/division.png</Image>
 		</Command.LargeImages>
+		<Command.LabelTitle>
+			<String>Division</String>
+		</Command.LabelTitle>
 	</Command>
 	<Command Name="cmdButtonPower">
 		<Command.LargeImages>
 			<Image Id ="21101">res/power.png</Image>
 		</Command.LargeImages>
+		<Command.LabelTitle>
+			<String>Power</String>
+		</Command.LabelTitle>
 	</Command>
 	<Command Name="cmdButtonRoot">
 		<Command.LargeImages>
 			<Image Id ="21102">res/root.png</Image>
 		</Command.LargeImages>
+		<Command.LabelTitle>
+			<String>Root</String>
+		</Command.LabelTitle>
 	</Command>
-	  
-	<Command Name="cmdGroupConstant">
-      <Command.LabelTitle>
-        <String Id ="22000">Constants</String>
-      </Command.LabelTitle>
-    </Command>
-    <Command Name="cmdButtonPi">
-		<Command.LabelTitle>
-			<String Id ="22100">π</String>
-		</Command.LabelTitle>
-    </Command>
-    <Command Name="cmdButtonEuler">
-		<Command.LabelTitle>
-			<String Id ="22101">e</String>
-		</Command.LabelTitle>
-    </Command>
-
-	  <Command Name="cmdGroupFunctions">
+	  <Command Name="cmdButtonSubscript">
+		  <Command.LargeImages>
+			  <Image Id ="21103">res/subscript.png</Image>
+		  </Command.LargeImages>
 		  <Command.LabelTitle>
-			  <String Id ="23000">Functions</String>
+			  <String>Subscript</String>
+		  </Command.LabelTitle>
+	  </Command>
+
+	  <Command Name="cmdGroupCalculus">
+		  <Command.LabelTitle>
+			  <String Id ="22000">Calculus</String>
+		  </Command.LabelTitle>
+	  </Command>
+	  <Command Name="cmdButtonIntegral">
+		  <Command.LargeImages>
+			  <Image Id ="22100">res/integral.png</Image>
+		  </Command.LargeImages>
+		  <Command.LabelTitle>
+			  <String>Integral</String>
+		  </Command.LabelTitle>
+	  </Command>
+	  <Command Name="cmdButtonDerivative">
+		  <Command.LargeImages>
+			  <Image Id ="22101">res/derivative.png</Image>
+		  </Command.LargeImages>
+		  <Command.LabelTitle>
+			  <String>Derivative</String>
+		  </Command.LabelTitle>
+	  </Command>
+	  <Command Name="cmdButtonLimits">
+		  <Command.LargeImages>
+			  <Image Id ="22102">res/limits.png</Image>
+		  </Command.LargeImages>
+		  <Command.LabelTitle>
+			  <String>Limits</String>
+		  </Command.LabelTitle>
+	  </Command>
+
+	  <Command Name="cmdGroupTriangle">
+		  <Command.LabelTitle>
+			  <String Id ="23000">Triangle</String>
 		  </Command.LabelTitle>
 	  </Command>
 	  <Command Name="cmdButtonSin">
@@ -101,19 +132,35 @@
 		  </Command.LabelTitle>
 	  </Command>
 
-	  <Command Name="cmdGroupSymbols">
+	  <Command Name="cmdGroupConstant">
 		  <Command.LabelTitle>
-			  <String Id ="24000">Symbols</String>
+			  <String Id ="24000">Constant</String>
+		  </Command.LabelTitle>
+	  </Command>
+	  <Command Name="cmdButtonPi">
+		  <Command.LabelTitle>
+			  <String Id ="24100">π</String>
+		  </Command.LabelTitle>
+	  </Command>
+	  <Command Name="cmdButtonEuler">
+		  <Command.LabelTitle>
+			  <String Id ="24101">e</String>
+		  </Command.LabelTitle>
+	  </Command>
+
+	  <Command Name="cmdGroupSymbol">
+		  <Command.LabelTitle>
+			  <String Id ="25000">Symbol</String>
 		  </Command.LabelTitle>
 	  </Command>
 	  <Command Name="cmdButtonTheta">
 		  <Command.LabelTitle>
-			  <String Id ="24100">θ</String>
+			  <String Id ="25100">θ</String>
 		  </Command.LabelTitle>
 	  </Command>
 	  <Command Name="cmdButtonPhi">
 		  <Command.LabelTitle>
-			  <String Id ="24101">φ</String>
+			  <String Id ="25101">φ</String>
 		  </Command.LabelTitle>
 	  </Command>
 
@@ -152,25 +199,28 @@
           <Tab.ScalingPolicy>
             <ScalingPolicy>
               <ScalingPolicy.IdealSizes>
-				  <Scale Group="cmdGroupObjects" Size="Medium" />
-				  <Scale Group="cmdGroupFunctions" Size="Medium" />
+				  <Scale Group="cmdGroupObject" Size="Medium" />
+				  <Scale Group="cmdGroupCalculus" Size="Medium" />
+				  <Scale Group="cmdGroupTriangle" Size="Medium" />
 				  <Scale Group="cmdGroupConstant" Size="Medium" />
-				  <Scale Group="cmdGroupSymbols" Size="Medium" />
+				  <Scale Group="cmdGroupSymbol" Size="Medium" />
               </ScalingPolicy.IdealSizes>
             </ScalingPolicy>
           </Tab.ScalingPolicy>
-			<Group CommandName="cmdGroupObjects"
-					SizeDefinition="ThreeButtons">
-				<Button CommandName="cmdButtonFraction" />
+			<Group CommandName="cmdGroupObject"
+					SizeDefinition="FourButtons">
+				<Button CommandName="cmdButtonDivision" />
 				<Button CommandName="cmdButtonPower" />
 				<Button CommandName="cmdButtonRoot" />
+				<Button CommandName="cmdButtonSubscript" />
 			</Group>
-			<Group CommandName="cmdGroupConstant"
-                 SizeDefinition="TwoButtons">
-				<Button CommandName="cmdButtonPi" />
-				<Button CommandName="cmdButtonEuler" />
+			<Group CommandName="cmdGroupCalculus"
+					SizeDefinition="ThreeButtons">
+				<Button CommandName="cmdButtonIntegral" />
+				<Button CommandName="cmdButtonDerivative" />
+				<Button CommandName="cmdButtonLimits" />
 			</Group>
-			<Group CommandName="cmdGroupFunctions"
+			<Group CommandName="cmdGroupTriangle"
 					SizeDefinition="NineButtons">
 				<Button CommandName="cmdButtonSin" />
 				<Button CommandName="cmdButtonCos" />
@@ -182,7 +232,12 @@
 				<Button CommandName="cmdButtonAtan" />
 				<Button CommandName="cmdButtonLn" />
 			</Group>
-			<Group CommandName="cmdGroupSymbols"
+			<Group CommandName="cmdGroupConstant"
+                 SizeDefinition="TwoButtons">
+				<Button CommandName="cmdButtonPi" />
+				<Button CommandName="cmdButtonEuler" />
+			</Group>
+			<Group CommandName="cmdGroupSymbol"
                  SizeDefinition="TwoButtons">
 				<Button CommandName="cmdButtonTheta" />
 				<Button CommandName="cmdButtonPhi" />

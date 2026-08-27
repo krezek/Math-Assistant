@@ -28,22 +28,10 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\calc_wnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\editor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gitems.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\help_wnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\main_wnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ribbon.h">
@@ -58,20 +46,14 @@
     <ClInclude Include="src\platform.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ids.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\editor.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gitems.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gparse_helper.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\help_wnd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -84,9 +66,6 @@
     <ClCompile Include="src\main_wnd_ex.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\panel.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\pch.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -94,9 +73,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\winutil.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\calc_wnd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cmdhandler.c">

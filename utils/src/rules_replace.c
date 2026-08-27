@@ -1,3 +1,7 @@
+/*
+*	Copywrite reserved for REZEK
+*/
+
 #include "pch.h"
 #include "platform.h"
 
@@ -42,8 +46,8 @@ bool rule_replace_decimal(Item** pItem)
 	char* z1_str = mpz_get_str(NULL, 10, z1);
 	char* z2_str = mpz_get_str(NULL, 10, z2);
 
-	*pItem = (Item*)ItemFrac_init(PROC_TERM, (Item*)ItemNumber_init(PROC_PRIMARY_4, z1_str),
-		(Item*)ItemNumber_init(PROC_PRIMARY_4, z2_str));
+	*pItem = (Item*)ItemFrac_init(PROC_TERM, (Item*)ItemNumber_init(PROC_NUMBER, z1_str),
+		(Item*)ItemNumber_init(PROC_NUMBER, z2_str));
 
 	free(z1_str);
 	free(z2_str);

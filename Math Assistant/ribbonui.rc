@@ -12,30 +12,59 @@ END
 
 STRINGTABLE 
 BEGIN
-    cmdGroupObjects_LabelTitle_RESID L"Objects" /* LabelTitle cmdGroupObjects_LabelTitle_RESID: (null) */
+    cmdGroupObject_LabelTitle_RESID L"Object" /* LabelTitle cmdGroupObject_LabelTitle_RESID: (null) */
 END
 
-cmdButtonFraction_LargeImages_RESID    IMAGE    "res\\divide.png" /* LargeImages cmdButtonFraction_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    cmdButtonDivision_LabelTitle_RESID L"Division" /* LabelTitle cmdButtonDivision_LabelTitle_RESID: (null) */
+END
+
+cmdButtonDivision_LargeImages_RESID    IMAGE    "res\\division.png" /* LargeImages cmdButtonDivision_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    cmdButtonPower_LabelTitle_RESID L"Power" /* LabelTitle cmdButtonPower_LabelTitle_RESID: (null) */
+END
+
 cmdButtonPower_LargeImages_RESID    IMAGE    "res\\power.png" /* LargeImages cmdButtonPower_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    cmdButtonRoot_LabelTitle_RESID L"Root" /* LabelTitle cmdButtonRoot_LabelTitle_RESID: (null) */
+END
+
 cmdButtonRoot_LargeImages_RESID    IMAGE    "res\\root.png" /* LargeImages cmdButtonRoot_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
-    cmdGroupConstant_LabelTitle_RESID L"Constants" /* LabelTitle cmdGroupConstant_LabelTitle_RESID: (null) */
+    cmdButtonSubscript_LabelTitle_RESID L"Subscript" /* LabelTitle cmdButtonSubscript_LabelTitle_RESID: (null) */
+END
+
+cmdButtonSubscript_LargeImages_RESID    IMAGE    "res\\subscript.png" /* LargeImages cmdButtonSubscript_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    cmdGroupCalculus_LabelTitle_RESID L"Calculus" /* LabelTitle cmdGroupCalculus_LabelTitle_RESID: (null) */
 END
 
 STRINGTABLE 
 BEGIN
-    cmdButtonPi_LabelTitle_RESID L"\x03c0" /* LabelTitle cmdButtonPi_LabelTitle_RESID: (null) */
+    cmdButtonIntegral_LabelTitle_RESID L"Integral" /* LabelTitle cmdButtonIntegral_LabelTitle_RESID: (null) */
 END
 
+cmdButtonIntegral_LargeImages_RESID    IMAGE    "res\\integral.png" /* LargeImages cmdButtonIntegral_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
-    cmdButtonEuler_LabelTitle_RESID L"e" /* LabelTitle cmdButtonEuler_LabelTitle_RESID: (null) */
+    cmdButtonDerivative_LabelTitle_RESID L"Derivative" /* LabelTitle cmdButtonDerivative_LabelTitle_RESID: (null) */
 END
 
+cmdButtonDerivative_LargeImages_RESID    IMAGE    "res\\derivative.png" /* LargeImages cmdButtonDerivative_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
-    cmdGroupFunctions_LabelTitle_RESID L"Functions" /* LabelTitle cmdGroupFunctions_LabelTitle_RESID: (null) */
+    cmdButtonLimits_LabelTitle_RESID L"Limits" /* LabelTitle cmdButtonLimits_LabelTitle_RESID: (null) */
+END
+
+cmdButtonLimits_LargeImages_RESID    IMAGE    "res\\limits.png" /* LargeImages cmdButtonLimits_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    cmdGroupTriangle_LabelTitle_RESID L"Triangle" /* LabelTitle cmdGroupTriangle_LabelTitle_RESID: (null) */
 END
 
 STRINGTABLE 
@@ -85,7 +114,22 @@ END
 
 STRINGTABLE 
 BEGIN
-    cmdGroupSymbols_LabelTitle_RESID L"Symbols" /* LabelTitle cmdGroupSymbols_LabelTitle_RESID: (null) */
+    cmdGroupConstant_LabelTitle_RESID L"Constant" /* LabelTitle cmdGroupConstant_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonPi_LabelTitle_RESID L"\x03c0" /* LabelTitle cmdButtonPi_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdButtonEuler_LabelTitle_RESID L"e" /* LabelTitle cmdButtonEuler_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdGroupSymbol_LabelTitle_RESID L"Symbol" /* LabelTitle cmdGroupSymbol_LabelTitle_RESID: (null) */
 END
 
 STRINGTABLE 

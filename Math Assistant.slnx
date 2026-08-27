@@ -2,7 +2,8 @@
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="3dutils/3dutils.vcxproj" Id="c750a7d4-6efa-4d85-88f8-ed42dd0a0544" />
+  <Project Path="calc/calc.vcxproj" Id="13f57834-840c-4593-ac88-098ed0003430" />
+  <Project Path="graphics/graphics.vcxproj" Id="c750a7d4-6efa-4d85-88f8-ed42dd0a0544" />
   <Project Path="Math Assistant/Math Assistant.vcxproj" Id="11cb4d75-32f4-4cfa-9b8f-5619cffd3904" />
   <Project Path="shell/shell.vcxproj" Id="8067d61f-0107-4f66-ad52-496ef6c91ee1" />
   <Project Path="sqlite/sqlite.vcxproj" Id="44c1f588-3699-47da-89fc-eeb4815fd6dc" />

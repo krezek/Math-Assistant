@@ -3,8 +3,8 @@
 
 typedef struct _Parser Parser;
 
-typedef void* (*PListFunc) (int pl, void* v, void* v1);
-typedef void* (*PEquFunc) (int pl, void* v, void* v1, const char c, bool concat);
+typedef void* (*PListFunc) (int pl, void* v, void* v1, const char c);
+typedef void* (*PEquFunc) (int pl, void* v, void* v1, const char* opstr);
 typedef void* (*PAddFunc) (int pl, void* v, void* v1);
 typedef void* (*PSubFunc) (int pl, void* v, void* v1);
 typedef void* (*PFracFunc) (int pl, void* v, void* v1);
@@ -14,10 +14,11 @@ typedef void* (*PFactorialFunc) (int pl, void* v);
 typedef void* (*PPowerFunc) (int pl, void* v, void* v1);
 typedef void* (*PSubscriptFunc) (int pl, void* v, void* v1);
 typedef void* (*PParenthesesFunc) (int pl, void* v);
-typedef void* (*PCommonFunc) (int pl, void* v, void* v1, const char* s);
-typedef void* (*PRootFunc) (int pl, void* v, void* v1);
+typedef void* (*PCommonFnFunc) (int pl, void* v, const char* s);
 typedef void* (*PNumberFunc) (int pl, const char* s);
 typedef void* (*PLiteralFunc) (int pl, const char* s);
+
+typedef void (*TreeFreeFunc) (void**);
 
 typedef struct _MParser
 {
@@ -32,8 +33,7 @@ typedef struct _MParser
 	PPowerFunc _powerFunc;
 	PSubscriptFunc _subscriptFunc;
 	PParenthesesFunc _parenthesesFunc;
-	PCommonFunc _commonFunc;
-	PRootFunc _rootFunc;
+	PCommonFnFunc _commonFnFunc;
 	PNumberFunc _numberFunc;
 	PLiteralFunc _literalFunc;
 } MParser;
@@ -41,7 +41,7 @@ typedef struct _MParser
 MParser* MParser_init();
 void MParser_free(MParser* mp);
 
-int MParser_do(MParser* pp, void** pgItems, const char* s);
+int MParser_do(MParser* pp, void** pgItems, const char* s, TreeFreeFunc treeFreeFunc);
 const wchar_t* MParser_get_last_error();
 
 #endif /* _MATH_PARSER_H_ */

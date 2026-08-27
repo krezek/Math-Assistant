@@ -9,11 +9,6 @@ static LONG _cRef = 1;
 
 static HRESULT STDMETHODCALLTYPE QueryInterface(IUICommandHandler* This, REFIID riid, void** ppvObject)
 {
-    if (!ppvObject)
-    {
-        return E_POINTER;
-    }
-
     if (!IsEqualIID(riid, &IID_IUICommandHandler)
         && !IsEqualIID(riid, &IID_IUnknown)) {
         *ppvObject = NULL;
